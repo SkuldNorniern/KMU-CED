@@ -1,15 +1,17 @@
+
 #define PIN_LED 13
 
 unsigned int count;
 bool toggle;
 void setup() {
   Serial.begin(115200);
-
   pinMode(PIN_LED, OUTPUT);
-  digitalWrite(PIN_LED, toggle);
-
-  while (!Serial)
+  while (!Serial) {
     ;
+  }
+  Serial.println("Hello World!");
+  count = toggle = 0;
+  digitalWrite(PIN_LED, toggle);
 }
 
 void loop() {

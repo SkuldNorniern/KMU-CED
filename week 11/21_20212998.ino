@@ -9,7 +9,7 @@ const int dutyneu = 1410; // servo neutral position (90 degree)
 
 int a, b; // unit: mm
 Servo myservo;
-static long apt = 0; 
+static long apt = 0;
 // Set the sampling time
 #define interval 2 // milliseconds
 unsigned long oldmil;
@@ -24,14 +24,14 @@ void setup() {
 // initialize GPIO pins
   pinMode(PIN_LED,OUTPUT);
   digitalWrite(PIN_LED, 1);
-  myservo.attach(10); 
+  myservo.attach(10);
   myservo.writeMicroseconds(dutyneu);
   delay(1000);
 // initialize serial port
   Serial.begin(115200);
 
-  a = 96;
-  b = 314;
+  a = 73;
+  b = 240;
 }
 
 float ir_distance(void){ // return value unit: mm
@@ -45,15 +45,15 @@ void loop() {
   float rdist = ir_distance();
   float calidist = 100 + 300.0 / (b - a) * (rdist - a);
   unsigned long dmil = 0; // clear last result
-  unsigned long mil = millis();  
-  if (mil != oldmil) { 
-    dmil = mil-oldmil; 
-    oldmil = mil;   
-  } 
-  
-  apt -= dmil; 
-  
-  if (apt <= 0) {  
+  unsigned long mil = millis();
+  if (mil != oldmil) {
+    dmil = mil-oldmil;
+    oldmil = mil;
+  }
+
+  apt -= dmil;
+
+  if (apt <= 0) {
     apt += interval;  // 아날로그값 읽기
     filter = lambda / (1 + lambda) * calidist + 1 / (1 + lambda) * prev; //필터된 값
     prev = filter; // 센서 필터 이전값 업데이트
@@ -66,7 +66,7 @@ void loop() {
   }
   if(rdist > 156 && rdist <224) digitalWrite(PIN_LED, 0);
   else digitalWrite(PIN_LED, 255);
-  if(filter>255)myservo.writeMicroseconds(1200);
-  else if(filter<255)myservo.writeMicroseconds(1800);
+  if(filter>220)myservo.writeMicroseconds(1200);
+  else if(filter<300)myservo.writeMicroseconds(1800);
   delay(20);
 }

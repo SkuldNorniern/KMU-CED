@@ -10,7 +10,7 @@
 float Kp = 2.2;                
 float Ki = 0;                  
 float Kd = 1;   
-#define tgdist 23
+#define tgdist 230
 
 const int dutyneu = 1410; // servo neutral position (90 degree)
 #define MXM -35
@@ -61,11 +61,11 @@ void loop()
     else if(ctrl < 1150) duty_curr = 1150;
 
     Serial.print("Min:0,Low:200,dist:");
-    Serial.print(fdist*10);
+    Serial.print(fdist);
     Serial.print(",pterm:"); 
     Serial.print(pt);
     Serial.print(",duty_target:");
-    Serial.print(tgdist*10);
+    Serial.print(tgdist);
     Serial.print(",dutycurr:");
     Serial.print(ctrl);
     Serial.println(",High:310,Max:2000");
@@ -78,7 +78,7 @@ float ir_distance(void)
 { // return value unit: mm
     float val;
     float volt = float(analogRead(PIN_IR));
-    val = ((6762.0 / (volt - 9.0)) - 4.0) ;
+    val = ((6762.0 / (volt - 9.0)) - 4.0)*10 ;
     float calidist = 100.0 + 300.0 / (DIST_40C - DIST_10C) * (val - DIST_10C);
     return calidist;
 }

@@ -7,10 +7,10 @@
 #define SVMX 2399
 #define DIST_10C 80
 #define DIST_40C 370
-float Kp = 2.2;                
-float Ki = 0;                  
-float Kd = 1;   
-#define tgdist 230
+float Kp = 3;              
+float Ki = 0.0;                  
+float Kd = 0.0;   
+#define tgdist 260
 
 const int dutyneu = 1410; // servo neutral position (90 degree)
 #define MXM -35
@@ -20,11 +20,11 @@ static long apt = 0;
 #define interval 2
 unsigned long oldmil;
 
-int fc = 15;
+int fc = 20;
 float dt = interval / 1000.0;
 float lambda = 2 * PI * fc * dt;
 float filter = 0.0, prev = 0.0;
-float rdist,fdist,pt,it,dit,prevdist;
+float rdist,fdist,pt,it,dit,prevdif;
 
 Servo myservo;
 void setup()
@@ -44,21 +44,22 @@ void setup()
 
 void loop()
 {
-    //float tt= millis();
+    float tt= millis();
     fdist = lpfilter();
     float curdif=tgdist-fdist;
     pt = Kp * curdif;               
-    //it = kd * (curdif - prevdif)/tt;                                           
-    //dit += ki * curdif*millis(); 
-    if(pt> MXP) pt= MXP;
-    else if(pt<MXM) pt= MXM;
-    float ctrl = pt+1520; 
+    it = Kd * (curdif - prevdif);                                           
+    dit = Ki * curdif;
+    
+    //if(pt> MXP) pt= MXP;
+    //else if(pt<MXM) pt= MXM;
+    float ctrl = 1400+pt+it+dit; 
     //prevdist = fdist; 
     // if(ctrl> MXP) ctrl= MXP;
     //else if(ctrl<MXM) ctrl= MXM;
     //float con=servo_duty(87+ctrl*0.9);
-    if(ctrl > 1670) duty_curr = 1670;
-    else if(ctrl < 1150) duty_curr = 1150;
+    //if(ctrl > 1785) ctrl = 1785;
+    //if(ctrl < 1605) ctrl = 1605;
 
     Serial.print("Min:0,Low:200,dist:");
     Serial.print(fdist);
@@ -70,7 +71,7 @@ void loop()
     Serial.print(ctrl);
     Serial.println(",High:310,Max:2000");
 
-        myservo.writeMicroseconds(ctrl); 
+    myservo.writeMicroseconds(ctrl); 
 
 }
 

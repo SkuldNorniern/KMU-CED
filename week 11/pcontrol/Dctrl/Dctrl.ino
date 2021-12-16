@@ -7,10 +7,10 @@
 #define SVMX 2399
 #define DIST_10C 80
 #define DIST_40C 370
-float Kp = 2;              
-float Ki = 0.0;                  
-float Kd = 1.4;   
-#define tgdist 230
+float Kp = 0.0;              
+float Ki = 0.54;                  
+float Kd = 0.0;   
+#define tgdist 260
 
 const int dutyneu = 1410; // servo neutral position (90 degree)
 #define MXM -35
@@ -53,24 +53,24 @@ void loop()
     
     //if(pt> MXP) pt= MXP;
     //else if(pt<MXM) pt= MXM;
-    float ctrl = 1410+pt+it+dit; 
-    //ctrl=SVMN + SVMX / (2257 - 845) * (ctrl - 845);
-  
+    float ctrl = 1458+pt+it+dit; 
+    //prevdist = fdist; 
+    // if(ctrl> MXP) ctrl= MXP;
+    //else if(ctrl<MXM) ctrl= MXM;
+    //float con=servo_duty(87+ctrl*0.9);
     if(ctrl > SVMX) ctrl = SVMX;
     if(ctrl < SVMN) ctrl = SVMN;
 
-    Serial.print("dist_ir:");
+    Serial.print("Min:0,Low:200,dist:");
     Serial.print(fdist);
     Serial.print(",pterm:"); 
-    Serial.print(map(pt,-1000,1000,510,610));
-    Serial.print(",dterm:"); 
-    Serial.print(map(dit,-1000,1000,510,610));
+    Serial.print(pt);
     Serial.print(",duty_target:");
-    Serial.print(map(tgdist,1000,2000,410,510));
+    Serial.print(tgdist);
     Serial.print(",dutycurr:");
-    Serial.print(map(ctrl,1000,2000,410,510));
-    Serial.println(",Min:100,Low:200,dist_target:255,High:310,Max:410");
-    
+    Serial.print(ctrl);
+    Serial.println(",High:310,Max:2000");
+
     myservo.writeMicroseconds(ctrl); 
 
 }
@@ -100,4 +100,7 @@ float lpfilter()
         prev = filter;
     }
     return filter;
+}
+int servo_duty(int a){
+  return map(a,0,180,SVMN,SVMX);
 }
